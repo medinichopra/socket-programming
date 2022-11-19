@@ -1,6 +1,7 @@
 import socket
 import json 
 import random
+import smtplib, ssl   
 
 hostIP = '0.0.0.0'
 port=8728
@@ -59,28 +60,52 @@ while True:
     # OPEN USERS FILE HERE
     with open("users.json", "r") as jsonFile:
         users = json.load(jsonFile)
+
     #this is where we add registration and authentication with ashoka ID
     ClientSocket.send("Hello! Are you a registered user? (Y/N):".encode()) #Ask if user is registered
     user = ClientSocket.recv(3000).decode()
+    
     if(user == "N"):
         ClientSocket.send("Enter your Ashoka email:".encode())
         #wait for response
         email = ClientSocket.recv(3000).decode() #gets email from client
+        # if email doesnt already exit in users.json then continue, else move to elif block
         if email.endswith('@ashoka.edu.in'):
-            num = "10" #str(random.randint(10))
-            ClientSocket.send(f"PWD: {num} A password has been sent to your email. Enter your password:".encode())
-            #generate and send password to email
-            password = ClientSocket.recv(3000).decode()
+            num = "10" #how to generate better password?
             
             #check if email actually exists
+            sender_email = "coursecatalogue2022@gmail.com" 
+            password = "jsqejhqylkftfypv" 
+            receiver_email = [f"{email}"]
+            message = """\
+From: Course Catalogue
+To: %s
+Subject: Authentication
+
+Your password is %s. This will remain your password for every login attempt""" % (email, num)
+
+            context = ssl.create_default_context()
+            try:
+                with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                    server.starttls(context=context)
+                    server.login(sender_email, password)
+                    server.sendmail(sender_email, receiver_email, message)
+                    server.close()
+                    ClientSocket.send("A password has been sent to your email. Enter your password:".encode())
+                    #HOW TO CHECK IF EMAIL EXISTS OR NOT
+                    password = ClientSocket.recv(3000).decode()
+            except Exception as ex:
+                ClientSocket.send("Something went wrong….",ex.encode())
+
             if password == num:
-                print("in here")
                 users[email] = password
-                ClientSocket.send("You have been logged in successfully.".encode())
+                ClientSocket.send("You have been logged in successfully.\n".encode())
                 if(ClientSocket.recv(3000).decode() != "OK"):
                     print("Disconnecting! Error!!")
                     ClientSocket.close()
                 handle_new_client(ClientSocket,Address)
+            else:
+                ClientSocket.send("Incorrect password! Disconnecting...".encode())
         else:
             ClientSocket.send("Invalid email".encode())
             #do equivalent of return 0
