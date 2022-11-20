@@ -1,6 +1,7 @@
 import socket
 import json 
 import random
+import string
 import smtplib, ssl   
 
 hostIP = '0.0.0.0'
@@ -12,8 +13,8 @@ print("Server is up!")
 
 options = ["Prerequisites for courses", "Semester-wise courses"]
 pre_req = {"CS-1101" : "None", "CS-1104" : "None", "CS-1209" : "None", "CS-1216" : "Introduction to Computer Programming", "CS-1203" : "Introduction to Computer Programming", "CS-1205" : "Introduction to Computer Programming", "CS-1217" : "Introduction to Computer Programming and Computer Organization and Systems", "CS-1390" : "Introduction to Computer Programming and Probability and Statistics", "CS-1340" : "Introduction to Computer Programming and Computer Organization and Systems", "CS-1319" : "Introduction to Computer Programming, Computer Organization and Systems, and Data Structures"}
-sem = {"Monsoon 2022" : "CS-1101 Introduction to Computer Programming, Computer Organisation and Systems, Data Structures, Probability and Statistics, Introduction to Machine Learning, Computer Networks, Programming Language Design and Implementation",
-"Spring 2022" : "CS-1101 Introduction to Computer Programming, CS-1104 Discrete Mathematics, Operating Systems, Algorithm Design and Analysis"}
+sem = {"Monsoon 2022" : "CS-1101 Introduction to Computer Programming, Computer Organisation and Systems, Data Structures, CS-1209 Probability and Statistics, CS-1390 Introduction to Machine Learning, CS-1340 Computer Networks, CS-1319 Programming Language Design and Implementation",
+"Spring 2022" : "CS-1101 Introduction to Computer Programming, CS-1104 Discrete Mathematics, CS-1217 Operating Systems, CS-1205 Algorithm Design and Analysis"}
 
 def handle_new_client(ClientSocket,Address):
     global options
@@ -71,7 +72,9 @@ while True:
         email = ClientSocket.recv(3000).decode() #gets email from client
         # if email doesnt already exit in users.json then continue, else move to elif block
         if email.endswith('@ashoka.edu.in'):
-            num = "10" #how to generate better password?
+            letters = string.ascii_lowercase
+            num = ''.join(random.choice(letters) for i in range(10))
+            #num = "10"
             
             #check if email actually exists
             sender_email = "coursecatalogue2022@gmail.com" 
@@ -88,11 +91,12 @@ Your password is %s. This will remain your password for every login attempt""" %
             try:
                 with smtplib.SMTP("smtp.gmail.com", 587) as server:
                     server.starttls(context=context)
-                    server.login(sender_email, password)
+                    server.login(sender_email, password) 
                     server.sendmail(sender_email, receiver_email, message)
                     server.close()
+                    server.set_debuglevel(True)
                     ClientSocket.send("A password has been sent to your email. Enter your password:".encode())
-                    #HOW TO CHECK IF EMAIL EXISTS OR NOT
+                        #HOW TO CHECK IF EMAIL EXISTS OR NOT
                     password = ClientSocket.recv(3000).decode()
             except Exception as ex:
                 ClientSocket.send("Something went wrong….",ex.encode())
