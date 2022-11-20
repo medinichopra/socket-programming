@@ -1,10 +1,10 @@
 import socket
 import json
-
+import sys
 
 host = socket.gethostname()  # as both code is running on same pc
 port = 8728  # socket server port number
-client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)  # instantiate, 
+client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
 client_socket.connect((host, port))  # connect to the server
 
 # This is where the sequence will begin, client waits for intro message
@@ -31,6 +31,7 @@ if user == 'N':
         client_socket.send('OK'.encode())  # Send OK message
     else:
         print(client_socket.recv(3000).decode()) #prints error mesage
+        sys.exit(0)
 elif user == 'Y':
     print(client_socket.recv(3000).decode()) #asks for email
     email = input() #takes email from user
@@ -45,10 +46,12 @@ elif user == 'Y':
         client_socket.send('OK'.encode())  # Send OK message
     else:
         print(client_socket.recv(3000).decode()) #prints error mesage
+        sys.exit(0)
 else: 
     #wait for error message
     print()
     print(client_socket.recv(3000).decode())
+    sys.exit(0)
 
 # This is where the client will receive the service options
 options = client_socket.recv(3000).decode() 

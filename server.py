@@ -1,8 +1,11 @@
+#NEED TO CHECK IF EMAIL EXISTS IRL, NEED TO CHECK IF USER ALREADY REGISTERED BEFORE
+
 import socket
 import json 
 import random
 import string
-import smtplib, ssl   
+import smtplib, ssl
+import sys   
 
 hostIP = '0.0.0.0'
 port=8728
@@ -58,11 +61,11 @@ while True:
         print("Disconnecting! Error!!")
         ClientSocket.close()
 
-    # OPEN USERS FILE HERE
+    # Open users file here
     with open("users.json", "r") as jsonFile:
         users = json.load(jsonFile)
 
-    #this is where we add registration and authentication with ashoka ID
+    # This is where we add registration and authentication with ashoka ID
     ClientSocket.send("Hello! Are you a registered user? (Y/N):".encode()) #Ask if user is registered
     user = ClientSocket.recv(3000).decode()
     
@@ -95,8 +98,7 @@ Your password is %s. This will remain your password for every login attempt""" %
                     server.sendmail(sender_email, receiver_email, message)
                     server.close()
                     server.set_debuglevel(True)
-                    ClientSocket.send("A password has been sent to your email. Enter your password:".encode())
-                        #HOW TO CHECK IF EMAIL EXISTS OR NOT
+                    ClientSocket.send("A password has been sent to your email; if not recieved, please reconnect to server. Enter your password:".encode())
                     password = ClientSocket.recv(3000).decode()
             except Exception as ex:
                 ClientSocket.send("Something went wrong….",ex.encode())
@@ -112,7 +114,7 @@ Your password is %s. This will remain your password for every login attempt""" %
                 ClientSocket.send("Incorrect password! Disconnecting...".encode())
         else:
             ClientSocket.send("Invalid email".encode())
-            #do equivalent of return 0
+            sys.exit(0)
 
     elif (user == "Y"):
         ClientSocket.send("Enter your Ashoka email:".encode())
@@ -131,8 +133,10 @@ Your password is %s. This will remain your password for every login attempt""" %
                 handle_new_client(ClientSocket,Address)
         else:
             ClientSocket.send("Invalid email".encode())
+            sys.exit(0)
     else:
         ClientSocket.send("Invalid choice! Disconnecting...".encode())
+        sys.exit(0)
 
     with open("users.json", "w") as jsonFile:
         json.dump(users, jsonFile)
