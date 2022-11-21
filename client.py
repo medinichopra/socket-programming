@@ -19,7 +19,7 @@ print()
 with open("users.json", "r") as jsonFile:
         users = json.load(jsonFile)
 
-if user == 'N':
+if(user == 'N'  or user == "n"):
     print(client_socket.recv(3000).decode()) #asks for email
     email = input() #takes email from user
     client_socket.send(email.encode()) #sends email to server
@@ -38,7 +38,7 @@ if user == 'N':
     else:
         print(client_socket.recv(3000).decode()) #prints error mesage
         sys.exit(0)
-elif user == 'Y':
+elif(user == 'Y' or user == "y"):
     print(client_socket.recv(3000).decode()) #asks for email
     email = input() #takes email from user
     client_socket.send(email.encode()) #sends email to server
