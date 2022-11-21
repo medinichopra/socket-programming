@@ -5,7 +5,8 @@ import string
 import smtplib, ssl
 import sys   
 
-hostIP = '0.0.0.0'
+hostIP = '127.0.0.1'
+#hostIP = '0.0.0.0'
 port=8728
 ServerSocket= socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 ServerSocket.bind((hostIP,port)) #binds the socket to the port
@@ -111,6 +112,7 @@ Your password is %s. This will remain your password for every login attempt.""" 
                 handle_new_client(ClientSocket,Address)
             else:
                 ClientSocket.send("Incorrect password! Disconnecting...".encode())
+                sys.exit(0)
         else:
             ClientSocket.send("Invalid email".encode())
             sys.exit(0)
@@ -130,6 +132,9 @@ Your password is %s. This will remain your password for every login attempt.""" 
                     print("Disconnecting! Error!!")
                     ClientSocket.close()
                 handle_new_client(ClientSocket,Address)
+            else:
+                ClientSocket.send("Incorrect password! Disconnecting...".encode())
+                sys.exit(0)
         else:
             ClientSocket.send("Invalid email".encode())
             sys.exit(0)

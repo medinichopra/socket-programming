@@ -2,7 +2,8 @@ import socket
 import json
 import sys
 
-host = socket.gethostname()  # as both code is running on same pc
+host = '127.0.0.1'
+#host = socket.gethostname()  # as both code is running on same pc
 port = 8728  # socket server port number
 client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM) 
 client_socket.connect((host, port))  # connect to the server
@@ -33,7 +34,10 @@ if(user == 'N'  or user == "n"):
         password = input()
         client_socket.send(password.encode()) #sends password to server
         print()
-        print(client_socket.recv(3000).decode()) #logged in message
+        message = client_socket.recv(3000).decode() #logged in message
+        print(message)
+        if (message.endswith('Disconnecting...')):
+            sys.exit(0)
         client_socket.send('OK'.encode())  # Send OK message
     else:
         print(client_socket.recv(3000).decode()) #prints error mesage
@@ -48,7 +52,10 @@ elif(user == 'Y' or user == "y"):
         password = input()
         client_socket.send(password.encode()) #sends password to server
         print()
-        print(client_socket.recv(3000).decode()) #logged in message
+        message = client_socket.recv(3000).decode() #logged in message
+        print(message)
+        if (message.endswith('Disconnecting...')):
+            sys.exit(0)
         client_socket.send('OK'.encode())  # Send OK message
     else:
         print(client_socket.recv(3000).decode()) #prints error mesage
