@@ -1,4 +1,4 @@
-#NEED TO CHECK IF EMAIL EXISTS IRL, NEED TO CHECK IF USER ALREADY REGISTERED BEFORE
+#GENERATE FRESH USERS.JSON EVERYTIME
 
 import socket
 import json 
@@ -73,6 +73,9 @@ while True:
         ClientSocket.send("Enter your Ashoka email:".encode())
         #wait for response
         email = ClientSocket.recv(3000).decode() #gets email from client
+        if email in users:
+            ClientSocket.send("You are already registered, please reconnect to server with exisiting password!".encode())
+            sys.exit(0)
         # if email doesnt already exit in users.json then continue, else move to elif block
         if email.endswith('@ashoka.edu.in'):
             letters = string.ascii_lowercase

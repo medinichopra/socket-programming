@@ -16,12 +16,18 @@ print(client_socket.recv(3000).decode()) # Asks if user is registered
 user = input() #takes Y/N from user accordingly
 client_socket.send(user.encode()) #sends Y/N to server
 print()
+with open("users.json", "r") as jsonFile:
+        users = json.load(jsonFile)
 
 if user == 'N':
     print(client_socket.recv(3000).decode()) #asks for email
     email = input() #takes email from user
     client_socket.send(email.encode()) #sends email to server
     print()
+    if email in users:
+        print(client_socket.recv(3000).decode())
+        print() 
+        sys.exit(0)
     if email.endswith('@ashoka.edu.in'):
         print(client_socket.recv(3000).decode()) #asks for password
         password = input()
