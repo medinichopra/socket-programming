@@ -33,7 +33,7 @@ Hello! Are you a registered user? (Y/N):
 ```
 *The options given in the bracket are what the user can choose from, and they are case sensitive. So y is not the same as Y. <br>
 
-An example input is 'y', and it will go as follows:
+An example input is 'Y', and it will go as follows:
 ```bash
 Hello! Are you a registered user? (Y/N):
 Y
